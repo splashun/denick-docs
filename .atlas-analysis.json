@@ -1,0 +1,59 @@
+{
+  "projectType": "api-service",
+  "projectName": "Denick",
+  "projectDescription": "A lightweight REST API for looking up the real Hypixel player name and UUID behind any Hypixel nickname.",
+  "theme": "luma",
+  "primaryColor": "#6366F1",
+  "lightColor": "#818CF8",
+  "darkColor": "#4338CA",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": ["introduction", "quickstart"]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": ["concepts/nicknames", "concepts/rate-limiting", "concepts/caching"]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Endpoints",
+            "pages": [
+              "api/denick",
+              "api/health",
+              "api/status"
+            ]
+          },
+          {
+            "group": "Resources",
+            "pages": [
+              "api/errors",
+              "api/response-format"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Resolve any Hypixel nickname to the player's real username and UUID",
+    "Fast in-memory LRU cache with 2-hour TTL for repeat lookups",
+    "Rate-limited to 100 requests per minute per client",
+    "Real-time cache invalidation via PostgreSQL LISTEN/NOTIFY",
+    "Health check endpoint for uptime monitoring",
+    "Standard JSON responses with clear error codes"
+  ],
+  "publicApiSurface": [
+    "GET /denick?nick={nick}",
+    "GET /health",
+    "GET /"
+  ]
+}

@@ -1,0 +1,37 @@
+---
+title: "How Denick Caches Nickname Lookups"
+sidebarTitle: "Caching"
+description: "Denick caches resolved nicknames for up to 2 hours, reducing database load and delivering faster responses on repeated lookups."
+---
+
+Denick uses an in-memory LRU (Least Recently Used) cache to serve repeated lookups of the same nickname without querying the database each time. This keeps response times consistently low even under high traffic, and means most repeat requests are resolved entirely in memory.
+
+## Cache Behaviour
+
+<CardGroup cols={3}>
+  <Card title="TTL" icon="clock">
+    Cache entries expire after **2 hours**. Any lookup for the same nickname within that window is served from the cache.
+  </Card>
+  <Card title="Capacity" icon="database">
+    The cache holds up to **10,000 nickname entries** in memory at once.
+  </Card>
+  <Card title="Eviction" icon="trash">
+    When the 10,000-entry cap is reached, the **least recently used** entry is evicted to make room for the new one.
+  </Card>
+</CardGroup>
+
+## Cache Invalidation
+
+When a nickname record is updated or removed in the underlying database — for example because a player changed or dropped their nickname — the corresponding cache entry is **immediately invalidated**. The next request for that nickname bypasses the cache and fetches fresh data from the database.
+
+You do not need to do anything to trigger invalidation. It happens automatically in real time as soon as the database record changes.
+
+## What This Means for You
+
+<Note>
+  If you look up a nickname and the underlying player data changes shortly afterwards, you may receive the old (stale) data for up to **2 hours** — or until the server-side cache is invalidated for that entry. If accuracy is critical, re-query after the 2-hour TTL window to guarantee you have the latest result.
+</Note>
+
+<Tip>
+  Implement a short **client-side cache** — for example, a 30-second in-memory map — so your application does not call the Denick API multiple times in rapid succession for the same nickname. Even a brief local cache dramatically reduces your API call volume and keeps you comfortably within the [rate limit](/concepts/rate-limiting) of 100 requests per 60-second window.
+</Tip>

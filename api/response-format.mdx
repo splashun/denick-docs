@@ -1,0 +1,102 @@
+---
+title: "Denick API Response Format and Conventions"
+sidebarTitle: "Response Format"
+description: "All Denick API responses are JSON. Learn the response envelope, content-type header, HTTP status codes used, and how to parse nickname lookup results."
+---
+
+Denick returns all responses as JSON with a `Content-Type: application/json` header. Both successful responses and errors follow consistent shapes, making it straightforward to parse them in any language.
+
+## Content Type
+
+Every response from the Denick API — whether a successful lookup, a health check, or an error — sets the following header:
+
+```
+Content-Type: application/json
+```
+
+You never need to negotiate a content type or set an `Accept` header; JSON is always returned.
+
+## Success Responses
+
+### `/denick` — Nickname Lookup
+
+A successful nickname resolution returns HTTP `200` with the following fields:
+
+<ResponseField name="nick" type="string" required>
+  The nickname that was queried. This mirrors the value you passed as the `nick` query parameter.
+</ResponseField>
+
+<ResponseField name="realName" type="string" required>
+  The player's real Minecraft username associated with the resolved nickname.
+</ResponseField>
+
+<ResponseField name="realUuid" type="string" required>
+  The player's Minecraft UUID in standard hyphenated format: `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`.
+</ResponseField>
+
+```json Example 200 response
+{
+  "nick": "thealfie381",
+  "realName": "unsplash",
+  "realUuid": "47602aa7-ea3f-48b2-ab51-8411d4a75cee"
+}
+```
+
+### `/health` — Health Check
+
+A health check response returns HTTP `200` when the service is operating normally, or `503` when the database is unreachable.
+
+<ResponseField name="status" type="string" required>
+  `"ok"` when the service is healthy and the database is reachable; `"unavailable"` when the database is down.
+</ResponseField>
+
+```json Example 200 response
+{ "status": "ok" }
+```
+
+## Error Responses
+
+All error responses share a single, predictable shape regardless of the HTTP status code.
+
+<ResponseField name="error" type="string" required>
+  A human-readable description of what went wrong. See the [Errors](/api/errors) page for the full list of possible messages and their causes.
+</ResponseField>
+
+```json Example error response
+{ "error": "<message>" }
+```
+
+## Parsing Responses in Code
+
+The examples below show how to fetch a nickname, check whether the request succeeded, and extract the relevant fields from both success and error responses.
+
+<CodeGroup>
+
+```javascript JavaScript
+const res = await fetch('https://hy.star.lat/denick?nick=thealfie381');
+const data = await res.json();
+
+if (!res.ok) {
+  console.error('Error:', data.error);
+} else {
+  console.log(data.realName, data.realUuid);
+}
+```
+
+```python Python
+import requests
+
+r = requests.get('https://hy.star.lat/denick', params={'nick': 'thealfie381'})
+data = r.json()
+
+if r.status_code != 200:
+    print('Error:', data.get('error'))
+else:
+    print(data['realName'], data['realUuid'])
+```
+
+</CodeGroup>
+
+<Note>
+  The `realUuid` field is always returned in the standard hyphenated format composed of five groups separated by hyphens (`8-4-4-4-12` hex characters, e.g. `47602aa7-ea3f-48b2-ab51-8411d4a75cee`). This is fully compatible with the standard Minecraft UUID format used by Mojang's API and all major Minecraft libraries.
+</Note>

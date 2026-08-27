@@ -1,0 +1,40 @@
+---
+title: "What Is Denick? Hypixel Nickname Resolver"
+sidebarTitle: "Introduction"
+description: "Denick is a free REST API that maps Hypixel nicknames to real player usernames and UUIDs. No authentication required."
+---
+
+On Hypixel, certain game modes allow players to disguise their identity behind a randomly assigned nickname, hiding their real Minecraft username from opponents and spectators. While this adds a layer of anonymity during gameplay, there are many legitimate use cases — from moderation tools to statistics trackers — where resolving a nickname back to the real player behind it is essential. Denick makes that resolution simple: send a nickname, get back the real username and UUID.
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Instant Lookups" icon="bolt">
+    Fast responses backed by an in-memory LRU cache that holds up to 10,000 entries, so repeat lookups are served without hitting the database.
+  </Card>
+  <Card title="No Auth Required" icon="unlock">
+    Denick is a fully open API — no API key, token, or account sign-up is needed to start making requests.
+  </Card>
+  <Card title="Standard JSON" icon="brackets-curly">
+    Every response, whether a successful lookup or an error, is returned in a consistent, predictable JSON format.
+  </Card>
+  <Card title="Rate Limited" icon="gauge">
+    A limit of 100 requests per minute per client keeps the API fast and fair for everyone.
+  </Card>
+</CardGroup>
+
+## Base URL
+
+All API requests are made to the following base URL:
+
+```plaintext Base URL
+https://hy.star.lat
+```
+
+## How It Works
+
+When you submit a nickname, Denick first checks its in-memory LRU cache. If a fresh result is available — cached entries are valid for up to two hours and invalidated in real time when a nickname changes — Denick returns it immediately without a database round-trip. If the nickname isn't cached, Denick queries its database, stores the result in the cache for future requests, and returns the real username and UUID to you. The entire flow is transparent: you always receive a single, consistent JSON object regardless of whether the result came from cache or the database.
+
+<Tip>
+  Ready to see Denick in action? Head over to the [Quick Start](/quickstart) guide to make your first API call in just a few steps.
+</Tip>

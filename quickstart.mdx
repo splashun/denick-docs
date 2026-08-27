@@ -1,47 +1,83 @@
 ---
-title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+title: "Get Started with Denick in 5 Minutes"
+sidebarTitle: "Quickstart"
+description: "Make your first Denick API call to resolve a Hypixel nickname. No sign-up or API key required — just send an HTTP request."
 ---
 
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
-
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
-
-## Prerequisites
-
-Before you begin, you must have:
-
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
-
-## Get started
+Denick requires no authentication or sign-up. You can start resolving Hypixel nicknames immediately by sending a GET request to the public API.
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
 
-    ```bash
-    npm install your-package
-    ```
-  </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
+  <Step title="Choose a nickname to look up">
+    Pick any Hypixel in-game nickname you want to resolve. Nicknames follow standard Minecraft username rules — they must be between 1 and 16 characters long and contain only letters, numbers, or underscores.
 
-    ```bash
-    your-cli init
-    ```
+    <Note>
+      Nicknames must match the pattern `^[a-zA-Z0-9_]{1,16}$`. Passing a nickname that contains spaces, special characters, or exceeds 16 characters will return a `400 Invalid nickname format` error.
+    </Note>
   </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
 
-    ```bash
-    your-cli start
-    ```
+  <Step title="Send your first request">
+    Call `GET /denick` with the `nick` query parameter set to the nickname you want to look up. Choose the language that fits your workflow:
+
+    <CodeGroup>
+
+      ```bash curl
+      curl "https://hy.star.lat/denick?nick=thealfie381"
+      ```
+
+      ```javascript JavaScript
+      const res = await fetch('https://hy.star.lat/denick?nick=thealfie381');
+      const data = await res.json();
+      console.log(data);
+      ```
+
+      ```python Python
+      import requests
+      r = requests.get('https://hy.star.lat/denick', params={'nick': 'thealfie381'})
+      print(r.json())
+      ```
+
+    </CodeGroup>
   </Step>
+
+  <Step title="Read the response">
+    A successful lookup returns HTTP `200` with a JSON body containing three fields:
+
+    ```json Response
+    {
+      "nick": "thealfie381",
+      "realName": "unsplash",
+      "realUuid": "47602aa7-ea3f-48b2-ab51-8411d4a75cee"
+    }
+    ```
+
+    | Field | Description |
+    |---|---|
+    | `nick` | The nickname you queried — echoed back exactly as supplied. |
+    | `realName` | The player's real Minecraft username linked to that nickname. |
+    | `realUuid` | The player's Minecraft UUID in standard hyphenated format. |
+
+    <Tip>
+      Denick caches resolved nicknames for up to two hours and holds up to 10,000 entries in memory. Cache entries are invalidated automatically whenever a nickname changes in the database, so you always receive fresh data.
+    </Tip>
+  </Step>
+
+  <Step title="Handle errors">
+    Most lookup failures fall into one of two categories:
+
+    - **404 — Not found.** The nickname exists in the correct format but has no match in the database. The response body will read `{ "error": "Nickname thealfie381 not found" }`.
+    - **400 — Invalid format.** The nickname you supplied does not satisfy the 1–16 character alphanumeric-underscore rule. The response body will read `{ "error": "Invalid nickname format" }`.
+
+    See the [Errors page](/api/errors) for the complete list of status codes and their meanings.
+  </Step>
+
 </Steps>
 
-<Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
-
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
-</Tip>
+<CardGroup cols={2}>
+  <Card title="API Reference" href="/api/denick" icon="code">
+    Explore every endpoint, parameter, and response field in detail.
+  </Card>
+  <Card title="Error Codes" href="/api/errors" icon="triangle-exclamation">
+    See the full list of error responses and how to handle them.
+  </Card>
+</CardGroup>

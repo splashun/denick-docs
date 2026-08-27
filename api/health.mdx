@@ -1,0 +1,57 @@
+---
+title: "GET /health — Check Denick API Availability"
+sidebarTitle: "GET /health"
+description: "GET /health returns the current operational status of the Denick API, including database connectivity. Use this for uptime monitoring."
+---
+
+The `/health` endpoint lets you check whether Denick is operational. It verifies database connectivity and returns a simple status object. Use it in uptime monitors or health-check probes.
+
+## Request
+
+```
+GET https://hy.star.lat/health
+```
+
+This endpoint takes no query parameters.
+
+### Example Request
+
+```bash cURL
+curl https://hy.star.lat/health
+```
+
+## Responses
+
+<Tabs>
+  <Tab title="200 OK">
+    The API is running and the database is reachable. Denick is fully operational and ready to serve nickname lookups.
+
+    ```json Response
+    {
+      "status": "ok"
+    }
+    ```
+
+    <ResponseField name="status" type="string">
+      Always `"ok"` when the API and database are healthy.
+    </ResponseField>
+  </Tab>
+
+  <Tab title="503 Unavailable">
+    The API server is up but cannot reach the database. Nickname lookups via `/denick` will fail until connectivity is restored.
+
+    ```json Response
+    {
+      "status": "unavailable"
+    }
+    ```
+
+    <ResponseField name="status" type="string">
+      Always `"unavailable"` when the database is unreachable.
+    </ResponseField>
+  </Tab>
+</Tabs>
+
+<Tip>
+  Poll `/health` no more than once every 30 seconds from monitoring systems to stay within the rate limit of 100 requests per 60-second window.
+</Tip>

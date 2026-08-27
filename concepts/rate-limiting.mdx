@@ -1,0 +1,52 @@
+---
+title: "Rate Limiting: Fair Use Policy for Denick API"
+sidebarTitle: "Rate Limiting"
+description: "Denick enforces 100 requests per 60-second window per client. Learn how rate limit headers work and how to handle 429 responses gracefully."
+---
+
+Denick enforces a rate limit to ensure fair access for all users. Each client is allowed up to **100 requests per 60-second window** — once you reach that ceiling, the API returns an HTTP `429 Too Many Requests` response until the window resets.
+
+## Limits at a Glance
+
+| Parameter | Value |
+|-----------|-------|
+| Window duration | 60 seconds |
+| Max requests per window | 100 |
+| Scope | Per client IP address |
+
+## Rate Limit Headers
+
+Denick uses standard RFC-compliant `RateLimit-*` headers on every response so you can monitor your usage in real time.
+
+```http Example rate limit headers
+RateLimit-Limit: 100
+RateLimit-Remaining: 87
+RateLimit-Reset: 42
+```
+
+<Expandable title="Header descriptions">
+  - **`RateLimit-Limit`** — The maximum number of requests allowed in the current window (always `100`).
+  - **`RateLimit-Remaining`** — How many requests you have left before hitting the limit in the current window.
+  - **`RateLimit-Reset`** — The number of **seconds** until the current window resets and your allowance is restored.
+</Expandable>
+
+## Handling 429 Responses
+
+When you exceed the rate limit, the API returns HTTP `429`. Read the `RateLimit-Reset` header to determine how long to wait before retrying.
+
+```javascript JavaScript retry example
+const res = await fetch('https://hy.star.lat/denick?nick=someNick');
+
+if (res.status === 429) {
+  const retryAfter = res.headers.get('RateLimit-Reset') ?? 60;
+  console.log(`Rate limited. Retry in ${retryAfter}s`);
+}
+```
+
+<Warning>
+  Do not immediately retry on a `429`. Always honour the `RateLimit-Reset` value to avoid wasting requests and prolonging your wait.
+</Warning>
+
+<Tip>
+  Cache nickname lookup results locally in your application. If you already resolved a nickname recently, serve the cached result instead of making another API call. This is the single most effective way to stay within the rate limit — see the [Caching](/concepts/caching) concept page for details.
+</Tip>

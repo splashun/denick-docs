@@ -1,0 +1,105 @@
+---
+title: "GET /denick — Resolve a Hypixel Nickname"
+sidebarTitle: "GET /denick"
+description: "GET /denick?nick={nick} — resolves a Hypixel nickname to the player's real username and UUID. Returns realName and realUuid on success."
+---
+
+The `/denick` endpoint is the core of the Denick API. Send a Hypixel nickname as a query parameter and receive the player's real Minecraft username and UUID in return.
+
+## Request
+
+```
+GET https://hy.star.lat/denick
+```
+
+### Query Parameters
+
+<ParamField query="nick" type="string" required>
+  The Hypixel nickname to resolve. Must be 1–16 characters and contain only letters (a–z, A–Z), digits (0–9), or underscores (`_`).
+</ParamField>
+
+### Example Request
+
+<CodeGroup>
+
+```bash cURL
+curl "https://hy.star.lat/denick?nick=thealfie381"
+```
+
+```javascript JavaScript
+const res = await fetch('https://hy.star.lat/denick?nick=thealfie381');
+const data = await res.json();
+```
+
+```python Python
+import requests
+
+r = requests.get('https://hy.star.lat/denick', params={'nick': 'thealfie381'})
+data = r.json()
+```
+
+</CodeGroup>
+
+## Responses
+
+<Tabs>
+  <Tab title="200 Success">
+    The nickname was found. The response contains the queried nickname alongside the player's real Minecraft username and UUID.
+
+    ```json Response
+    {
+      "nick": "thealfie381",
+      "realName": "unsplash",
+      "realUuid": "47602aa7-ea3f-48b2-ab51-8411d4a75cee"
+    }
+    ```
+
+    <ResponseField name="nick" type="string">
+      The nickname that was queried.
+    </ResponseField>
+
+    <ResponseField name="realName" type="string">
+      The player's real Minecraft username.
+    </ResponseField>
+
+    <ResponseField name="realUuid" type="string">
+      The player's UUID in hyphenated format (e.g. `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`).
+    </ResponseField>
+  </Tab>
+
+  <Tab title="400 Bad Request">
+    The `nick` parameter did not pass validation. Ensure your nickname matches the required pattern before retrying.
+
+    ```json Response
+    {
+      "error": "Invalid nickname format"
+    }
+    ```
+
+    The `nick` value must match the regular expression `^[a-zA-Z0-9_]{1,16}$` — between 1 and 16 characters, using only letters (a–z, A–Z), digits (0–9), or underscores (`_`). Any other characters, or a value longer than 16 characters, will trigger this error.
+  </Tab>
+
+  <Tab title="404 Not Found">
+    The nickname exists in a valid format but is not present in Denick's database. The player may not have used a nickname, or the nickname may have changed.
+
+    ```json Response
+    {
+      "error": "Nickname thealfie381 not found"
+    }
+    ```
+
+    The error message includes the queried nickname so you can confirm which lookup failed.
+  </Tab>
+
+  <Tab title="500 Server Error">
+    A transient server-side error occurred while querying the database. The issue is not caused by your request.
+
+    ```json Response
+    {
+      "error": "Database error"
+    }
+    ```
+
+    Wait a moment and retry the request. If the error persists, check the `/health` endpoint to confirm API availability.
+  </Tab>
+</Tabs>

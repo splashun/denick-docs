@@ -1,0 +1,103 @@
+---
+title: "Denick API Error Codes and Troubleshooting"
+sidebarTitle: "Errors"
+description: "Complete reference for Denick API HTTP status codes and error messages. Includes causes, example payloads, and recommended handling strategies."
+---
+
+Denick uses standard HTTP status codes and returns a consistent JSON error object for every failure. All error responses contain an `error` field with a human-readable message that describes what went wrong, making it easy to programmatically detect and react to specific failure conditions.
+
+## Error Response Shape
+
+Every error response from the Denick API follows this structure:
+
+```json Error response envelope
+{
+  "error": "<human-readable message>"
+}
+```
+
+## Status Code Reference
+
+<Accordion title="400 Bad Request">
+  The `nick` query parameter you supplied does not match the required format. Denick validates every nickname against the pattern `^[a-zA-Z0-9_]{1,16}$` before performing a lookup.
+
+  **Example response**
+
+  ```json Example
+  { "error": "Invalid nickname format" }
+  ```
+
+  **How to fix**
+
+  Ensure the nickname value you pass satisfies all of the following rules:
+
+  - Between **1 and 16 characters** long
+  - Contains only **letters** (`a–z`, `A–Z`), **digits** (`0–9`), or **underscores** (`_`)
+  - Contains no spaces, hyphens, or special characters
+</Accordion>
+
+<Accordion title="404 Not Found">
+  A 404 response can occur in two distinct situations:
+
+  **1. Nickname not in the database**
+
+  The nickname you queried is correctly formatted, but Denick has no record of it in its database.
+
+  ```json Example
+  { "error": "Nickname thealfie381 not found" }
+  ```
+
+  The database is updated periodically and invalidated in real time when nicknames change. If you believe the nickname should exist, try again after a short delay.
+
+  **2. Unknown route**
+
+  The URL path you requested does not match any endpoint exposed by the API.
+
+  ```json Example
+  { "error": "Resource not found" }
+  ```
+
+  Double-check that you are using the correct base URL (`https://hy.star.lat`) and that the path matches one of the documented endpoints: `/denick`, `/health`, or `/`.
+</Accordion>
+
+<Accordion title="429 Too Many Requests">
+  You have exceeded the rate limit of **100 requests per 60-second window**. Denick uses standard `RateLimit-*` headers so you can track your current usage and know exactly when your quota resets.
+
+  **Recommended handling**
+
+  1. Read the `RateLimit-Reset` header from the response — it tells you how many seconds remain before the window resets.
+  2. Pause your requests for that duration before retrying.
+  3. Consider adding exponential back-off logic if you are making requests in a tight loop.
+</Accordion>
+
+<Accordion title="500 Internal Server Error">
+  An unexpected server-side error occurred while querying the database. This is not caused by your request.
+
+  **Example response**
+
+  ```json Example
+  { "error": "Database error" }
+  ```
+
+  **Recommended handling**
+
+  Retry the request after a short delay using exponential back-off. If the error persists across multiple attempts, check the `/health` endpoint to confirm whether the service is operational.
+</Accordion>
+
+<Accordion title="503 Service Unavailable">
+  The database backend is currently unreachable. This status is only returned by the `/health` endpoint and indicates a temporary infrastructure issue.
+
+  **Example response**
+
+  ```json Example
+  { "status": "unavailable" }
+  ```
+
+  **Recommended handling**
+
+  Wait and retry after a short interval. Poll `GET /health` periodically — once it returns `{ "status": "ok" }`, normal service has resumed.
+</Accordion>
+
+<Tip>
+  If you are receiving 429 responses, see the [Rate Limiting](/concepts/rate-limiting) page for a full breakdown of the quota headers, window behaviour, and recommended retry strategies.
+</Tip>

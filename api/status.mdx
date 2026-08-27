@@ -1,0 +1,39 @@
+---
+title: "GET / — Denick API Root Status"
+sidebarTitle: "GET /"
+description: "GET / returns a basic status message confirming the Denick API is reachable. Use it as a lightweight liveness check."
+---
+
+The root endpoint `/` confirms the API server is running and reachable. It does not check database connectivity — use `/health` for a full connectivity check.
+
+## Request
+
+```
+GET https://hy.star.lat/
+```
+
+This endpoint takes no query parameters.
+
+### Example Request
+
+```bash cURL
+curl https://hy.star.lat/
+```
+
+## Response
+
+A 200 response confirms the server is up. The body contains a single `message` field with a human-readable status string.
+
+```json Response
+{
+  "message": "..."
+}
+```
+
+<ResponseField name="message" type="string">
+  A status message indicating the server is running and reachable.
+</ResponseField>
+
+<Note>
+  For a meaningful health check that also verifies database connectivity, use `GET /health` instead.
+</Note>

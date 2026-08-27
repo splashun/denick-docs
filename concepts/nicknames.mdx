@@ -1,0 +1,47 @@
+---
+title: "Understanding Hypixel Nicknames and Lookups"
+sidebarTitle: "Nicknames"
+description: "Learn how Hypixel nicknames work, why they hide player identity, and how Denick resolves them to real usernames and UUIDs."
+---
+
+Hypixel is one of the most popular Minecraft multiplayer servers, and it lets players disguise their identity using a **nickname** — a temporary alias displayed to other players instead of their real Minecraft username. This makes it difficult to identify who you are actually playing against. Denick cuts through those aliases, resolving any Hypixel nickname to the underlying real username and UUID.
+
+## What Is a Nickname?
+
+A Hypixel nickname is a temporary in-game alias that a player can set to appear under a different name on the server. While the nickname changes how a player appears in chat, scoreboards, and game lobbies, their actual Minecraft account remains unchanged. The real username and UUID tied to their Mojang account always exist underneath the alias — Denick surfaces exactly that information.
+
+## Nickname Format Rules
+
+<Note>
+  Hypixel nicknames follow the same character constraints as standard Minecraft usernames: **1–16 characters**, using only **letters** (a–z, A–Z), **digits** (0–9), and **underscores** (`_`). This is enforced by the regex `^[a-zA-Z0-9_]{1,16}$`. If you send a nickname that falls outside these rules — for example one that contains a space or special character — the API returns a `400 Invalid nickname format` error.
+</Note>
+
+## What Denick Returns
+
+A successful lookup returns a JSON object with three fields:
+
+<ResponseField name="nick" type="string">
+  The nickname you queried. This echoes back the value you passed in the `nick` query parameter.
+</ResponseField>
+
+<ResponseField name="realName" type="string">
+  The player's actual Minecraft username — the name tied to their Mojang/Microsoft account.
+</ResponseField>
+
+<ResponseField name="realUuid" type="string">
+  The player's UUID in standard hyphenated format, for example `47602aa7-ea3f-48b2-ab51-8411d4a75cee`. You can use this UUID to make further lookups against the Mojang API or other Minecraft services.
+</ResponseField>
+
+Here is a full example response:
+
+```json Example response
+{
+  "nick": "thealfie381",
+  "realName": "unsplash",
+  "realUuid": "47602aa7-ea3f-48b2-ab51-8411d4a75cee"
+}
+```
+
+## When a Nickname Is Not Found
+
+If Denick has no record of the nickname you queried, it returns a `404` response with the body `{ "error": "Nickname <nick> not found" }`. This does not necessarily mean the nickname does not exist on Hypixel — it means Denick has not yet observed and recorded it. The database grows over time as new nicknames are encountered, so a nickname that returns 404 today may be resolvable in the future.

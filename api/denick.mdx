@@ -1,14 +1,14 @@
 ---
-title: "GET /denick — Resolve a Hypixel Nickname"
-sidebarTitle: "GET /denick"
-description: "GET /denick?nick={nick} — resolves a Hypixel nickname to the player's real username and UUID. Returns realName and realUuid on success."
+title: "GET /denick – Resolve a Hypixel Nickname to Username"
+sidebarTitle: "Resolve Nickname"
+description: "Use GET /denick?nick={nick} to look up a Hypixel nickname and receive the player's real Minecraft username and UUID in a single JSON request."
 ---
 
 The `/denick` endpoint is the core of the Denick API. Send a Hypixel nickname as a query parameter and receive the player's real Minecraft username and UUID in return.
 
 ## Request
 
-```
+```http
 GET https://hy.star.lat/denick
 ```
 

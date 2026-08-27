@@ -1,7 +1,7 @@
 ---
-title: "Understanding Hypixel Nicknames and Lookups"
+title: "Hypixel Nicknames: How Denick Resolves Player Aliases"
 sidebarTitle: "Nicknames"
-description: "Learn how Hypixel nicknames work, why they hide player identity, and how Denick resolves them to real usernames and UUIDs."
+description: "Learn how Hypixel nicknames work, why they hide player identity, and how Denick resolves any alias to the real Minecraft username and UUID."
 ---
 
 Hypixel is one of the most popular Minecraft multiplayer servers, and it lets players disguise their identity using a **nickname** — a temporary alias displayed to other players instead of their real Minecraft username. This makes it difficult to identify who you are actually playing against. Denick cuts through those aliases, resolving any Hypixel nickname to the underlying real username and UUID.
@@ -44,4 +44,4 @@ Here is a full example response:
 
 ## When a Nickname Is Not Found
 
-If Denick has no record of the nickname you queried, it returns a `404` response with the body `{ "error": "Nickname <nick> not found" }`. This does not necessarily mean the nickname does not exist on Hypixel — it means Denick has not yet observed and recorded it. The database grows over time as new nicknames are encountered, so a nickname that returns 404 today may be resolvable in the future.
+If Denick has no record of the nickname you queried, it returns a `404` response with the body `{ "error": "Nickname <nick> not found" }`. This does not necessarily mean the nickname does not exist on Hypixel — it means Denick has not yet observed and recorded it. Denick's coverage grows over time as new nicknames are encountered, so a nickname that returns 404 today may be resolvable in the future.

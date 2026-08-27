@@ -1,10 +1,10 @@
 ---
-title: "How Denick Caches Nickname Lookups"
+title: "How Denick Caches Nickname Lookups for Fast Responses"
 sidebarTitle: "Caching"
-description: "Denick caches resolved nicknames for up to 2 hours, reducing database load and delivering faster responses on repeated lookups."
+description: "Denick caches resolved nicknames in memory for up to 2 hours, delivering fast repeat lookups and keeping you well within your rate limit."
 ---
 
-Denick uses an in-memory LRU (Least Recently Used) cache to serve repeated lookups of the same nickname without querying the database each time. This keeps response times consistently low even under high traffic, and means most repeat requests are resolved entirely in memory.
+Denick uses an in-memory LRU (Least Recently Used) cache to serve repeated lookups of the same nickname instantly. This keeps response times consistently low even under high traffic, and means most repeat requests are resolved entirely in memory without any additional round-trip overhead.
 
 ## Cache Behaviour
 
@@ -22,9 +22,9 @@ Denick uses an in-memory LRU (Least Recently Used) cache to serve repeated looku
 
 ## Cache Invalidation
 
-When a nickname record is updated or removed in the underlying database — for example because a player changed or dropped their nickname — the corresponding cache entry is **immediately invalidated**. The next request for that nickname bypasses the cache and fetches fresh data from the database.
+When nickname data changes — for example because a player changed or dropped their nickname — the corresponding cache entry is **immediately invalidated** automatically. The next request for that nickname is resolved against the latest data rather than the stale cached value.
 
-You do not need to do anything to trigger invalidation. It happens automatically in real time as soon as the database record changes.
+You do not need to do anything to trigger invalidation. It happens automatically in real time as soon as the underlying nickname data changes.
 
 ## What This Means for You
 

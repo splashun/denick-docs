@@ -1,7 +1,7 @@
 ---
-title: "Denick API Response Format and Conventions"
+title: "Denick API Response Format, Fields, and Conventions"
 sidebarTitle: "Response Format"
-description: "All Denick API responses are JSON. Learn the response envelope, content-type header, HTTP status codes used, and how to parse nickname lookup results."
+description: "All Denick API responses are JSON. Learn the response fields, content-type header, and how to parse successful and error responses in your language."
 ---
 
 Denick returns all responses as JSON with a `Content-Type: application/json` header. Both successful responses and errors follow consistent shapes, making it straightforward to parse them in any language.
@@ -53,6 +53,20 @@ A health check response returns HTTP `200` when the service is operating normall
 ```json Example 200 response
 { "status": "ok" }
 ```
+
+### `/` — Root
+
+A request to the root path returns HTTP `200` with a brief informational message. This endpoint requires no parameters and is useful for a quick connectivity check.
+
+```json Example 200 response
+{
+  "message": "Usage: /denick?nick={nick}"
+}
+```
+
+<Note>
+  The root endpoint is informational only. Use `/health` to check service availability and `/denick` to perform nickname lookups.
+</Note>
 
 ## Error Responses
 

@@ -1,7 +1,7 @@
 ---
-title: "Denick API Error Codes and Troubleshooting"
+title: "Denick API Error Codes: Reference and Troubleshooting"
 sidebarTitle: "Errors"
-description: "Complete reference for Denick API HTTP status codes and error messages. Includes causes, example payloads, and recommended handling strategies."
+description: "Complete reference for all Denick API HTTP status codes and error messages, with example payloads and recommended handling strategies for each."
 ---
 
 Denick uses standard HTTP status codes and returns a consistent JSON error object for every failure. All error responses contain an `error` field with a human-readable message that describes what went wrong, making it easy to programmatically detect and react to specific failure conditions.
@@ -47,7 +47,7 @@ Every error response from the Denick API follows this structure:
   { "error": "Nickname thealfie381 not found" }
   ```
 
-  The database is updated periodically and invalidated in real time when nicknames change. If you believe the nickname should exist, try again after a short delay.
+  The nickname index is updated continuously. If you believe the nickname should exist, try again after a short delay.
 
   **2. Unknown route**
 
@@ -63,6 +63,12 @@ Every error response from the Denick API follows this structure:
 <Accordion title="429 Too Many Requests">
   You have exceeded the rate limit of **100 requests per 60-second window**. Denick uses standard `RateLimit-*` headers so you can track your current usage and know exactly when your quota resets.
 
+  **Example response**
+
+  ```json Example
+  { "message": "Too many requests, please try again later." }
+  ```
+
   **Recommended handling**
 
   1. Read the `RateLimit-Reset` header from the response — it tells you how many seconds remain before the window resets.
@@ -71,7 +77,7 @@ Every error response from the Denick API follows this structure:
 </Accordion>
 
 <Accordion title="500 Internal Server Error">
-  An unexpected server-side error occurred while querying the database. This is not caused by your request.
+  An unexpected server-side error occurred while processing your request. This is not caused by anything in your request.
 
   **Example response**
 

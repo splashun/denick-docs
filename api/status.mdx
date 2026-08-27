@@ -1,14 +1,14 @@
 ---
-title: "GET / — Denick API Root Status"
-sidebarTitle: "GET /"
-description: "GET / returns a basic status message confirming the Denick API is reachable. Use it as a lightweight liveness check."
+title: "GET / – Denick API Root Endpoint and Liveness Check"
+sidebarTitle: "API Root"
+description: "GET / confirms the Denick API server is reachable with a lightweight liveness check. It does not verify database connectivity; use GET /health for that."
 ---
 
-The root endpoint `/` confirms the API server is running and reachable. It does not check database connectivity — use `/health` for a full connectivity check.
+The root endpoint `/` confirms the API server is running and reachable. It does not check database connectivity — use [`/health`](/api/health) for a full connectivity check that also verifies the service can handle nickname lookups.
 
 ## Request
 
-```
+```http
 GET https://hy.star.lat/
 ```
 
@@ -22,18 +22,23 @@ curl https://hy.star.lat/
 
 ## Response
 
-A 200 response confirms the server is up. The body contains a single `message` field with a human-readable status string.
+A `200` response confirms the server is up. The body contains a `message` field with a human-readable status string and a `meantimeEntertainment` field.
 
 ```json Response
 {
-  "message": "..."
+  "message": "the db will have entries at some point lol",
+  "meantimeEntertainment": "https://www.coolmathgames.com/0-papas-freezeria"
 }
 ```
 
 <ResponseField name="message" type="string">
-  A status message indicating the server is running and reachable.
+  A human-readable string indicating the server is running and reachable.
+</ResponseField>
+
+<ResponseField name="meantimeEntertainment" type="string">
+  A URL included in the root response.
 </ResponseField>
 
 <Note>
-  For a meaningful health check that also verifies database connectivity, use `GET /health` instead.
+  This endpoint only confirms the server process is alive. For a meaningful health check that also verifies database connectivity, use `GET /health` instead.
 </Note>

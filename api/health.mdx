@@ -1,14 +1,14 @@
 ---
-title: "GET /health — Check Denick API Availability"
-sidebarTitle: "GET /health"
-description: "GET /health returns the current operational status of the Denick API, including database connectivity. Use this for uptime monitoring."
+title: "GET /health – Verify Denick API and Database Status"
+sidebarTitle: "Health Check"
+description: "Use GET /health to confirm the Denick API is operational and able to serve requests. Returns ok when healthy, or unavailable when service is degraded."
 ---
 
 The `/health` endpoint lets you check whether Denick is operational. It verifies database connectivity and returns a simple status object. Use it in uptime monitors or health-check probes.
 
 ## Request
 
-```
+```http
 GET https://hy.star.lat/health
 ```
 

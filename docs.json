@@ -3,9 +3,9 @@
   "name": "Denick",
   "theme": "luma",
   "colors": {
-    "primary": "#6366F1",
-    "light": "#818CF8",
-    "dark": "#4338CA"
+    "primary": "#ffd76a",
+    "light": "#ffd76a",
+    "dark": "#ffd76a"
   },
   "favicon": "/favicon.svg",
   "navigation": {

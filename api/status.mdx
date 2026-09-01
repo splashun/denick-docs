@@ -1,10 +1,10 @@
 ---
-title: "GET / – Denick API Root Endpoint and Liveness Check"
-sidebarTitle: "API Root"
-description: "GET / confirms the Denick API server is reachable with a lightweight liveness check. It does not verify database connectivity; use GET /health for that."
+title: "GET / – Denick API Status Check"
+sidebarTitle: "API Status"
+description: "GET / on the Denick API is a lightweight status check that returns a 302 redirect to the documentation. Use GET /health to verify database connectivity."
 ---
 
-The root endpoint `/` confirms the API server is running and reachable. It does not check database connectivity — use [`/health`](/api/health) for a full connectivity check that also verifies the service can handle nickname lookups.
+The root endpoint `/` on the Denick API is a lightweight status check that responds with a `302 Found` redirect to the documentation at [docs.star.lat](https://docs.star.lat). A successful redirect confirms the API process is running and reachable, but it does not check the database. Use [`GET /health`](/api/health) to verify database connectivity.
 
 ## Request
 
@@ -12,33 +12,27 @@ The root endpoint `/` confirms the API server is running and reachable. It does 
 GET https://hy.star.lat/
 ```
 
-This endpoint takes no query parameters.
+This endpoint takes no query parameters and no request body.
 
-### Example Request
+### Example request
 
 ```bash cURL
-curl https://hy.star.lat/
+curl -i https://hy.star.lat/
 ```
 
 ## Response
 
-A `200` response confirms the server is up. The body contains a `message` field with a human-readable status string and a `meantimeEntertainment` field.
+A `302 Found` response with a `Location` header pointing to the documentation site.
 
-```json Response
-{
-  "message": "the db will have entries at some point lol",
-  "meantimeEntertainment": "https://www.coolmathgames.com/0-papas-freezeria"
-}
+```http Response
+HTTP/1.1 302 Found
+Location: https://docs.star.lat
 ```
 
-<ResponseField name="message" type="string">
-  A human-readable string indicating the server is running and reachable.
-</ResponseField>
-
-<ResponseField name="meantimeEntertainment" type="string">
-  A URL included in the root response.
-</ResponseField>
-
 <Note>
-  This endpoint only confirms the server process is alive. For a meaningful health check that also verifies database connectivity, use `GET /health` instead.
+  Most HTTP clients follow the redirect automatically. Pass `-i` to inspect the response, or `-L` to follow it, when using `curl`. This endpoint does not confirm database connectivity; use [`GET /health`](/api/health) for that.
 </Note>
+
+<Tip>
+  Requests to `/` count against the rate limit of 100 requests per 60-second window, the same as every other endpoint.
+</Tip>
